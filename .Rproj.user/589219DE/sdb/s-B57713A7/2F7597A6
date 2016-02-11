@@ -1,0 +1,18 @@
+{
+    "contents" : "#This file simulate a 2 population competition with lotka-Volterra\n#predator-prey equations. This is a base for constructing an n-population\n#model\n\nlibrary(deSolve)\n\n# define the parameter vector\nparameters<-c(r1=1.2,\n              r2=1.4,\n              a12=0.6,\n              a21=0.7)\n\n#define the state variables (populations) and their initial conditions are\nstate<-c(V=5, P=5)\n\n#define the vector of times for the output\ntimes<-seq(from=0,to=100,by=0.5)\n\n# define the equations\nlvppode<-function(t,state,parameters)\n{\n  with(as.list(c(state,parameters)),\n       {\n         #this defines the differential equations\n         dV<-  r1*V - (a12*V*P)\n         dP<- -r2*P + (a12*V*P)\n         #this defines the output\n         list(c(dV,dP))\n       }) #this parenthesis ends the with\n}\n\nout<-ode(y=state, times=times, func=lvppode, parms=parameters)\n",
+    "created" : 1455131346917.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "598980291",
+    "id" : "2F7597A6",
+    "lastKnownWriteTime" : 1455163071,
+    "path" : "~/harvest/R/lvppode.R",
+    "project_path" : "lvppode.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
