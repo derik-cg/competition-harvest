@@ -4,6 +4,10 @@
 #competition network
 #this applies laird et al 2009 on a lv system
 
+#The objective of this file is to show that symmetric deviations
+#in alphas from the ratio k1/k2 and k2/k1 preserve the numerical
+#value of the equilibrium.
+ 
 library(deSolve)
 rm(list=ls())
 
@@ -29,8 +33,9 @@ names(state)<-paste("N",1:size,sep="")
 #        A<-B kB/kA > alpha21  and kA/kB < alpha12
 #        ####       #                    #
 ##alpha[1,1]<- 0
-big<-1.5
-sma<-0.5
+dist<-0.9
+big<-1+dist
+sma<-1-dist
 alphas[1,2]<- big # 1->2
 alphas[2,1]<- sma ##1->2  
 alphas[1,3]<- big # 1->3

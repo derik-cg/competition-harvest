@@ -1,0 +1,18 @@
+{
+    "contents" : "#this files simulates a community of five populations competing\n#according to the Lotka-Volterra assumptions.\n#the objective is to try intransitive topologies of the\n#competition network\n#this applies laird et al 2009 on a lv system\n\n#the objective of this file is to examine the stability of the\n#equilibrium point when alphas are changed one at a time.\n\nlibrary(deSolve)\nrm(list=ls())\n\n#the size of the system is \nsize<-5\n\n# define the parameter vectors\nrs<-rep(0.5,size) #growth rates\nks<-rep(100,size) #carrying capacities\n\n#define alphas zeros indicate no interaction\nalphas<-matrix(0,nrow=size,ncol=size) #competition coefs.\n\n#define the state variables (populations) and their initial conditions are\n#since this is a matrix notation system, use a named vector for \n#graphing purposes.\nstate<-rep(c(20,20), length.out=size)\nnames(state)<-paste(\"N\",1:size,sep=\"\")\n\n#to assign the competition coefficients, it was assumed \n#pairwise competitions in competitive exclussion\n#then if A->B kB/kA < alpha21 and  kB/kA > alpha12\n#        A<-B kB/kA > alpha21  and kA/kB < alpha12\n#        ####       #                    #\n##alpha[1,1]<- 0\n#do a for loop for one of the alpas\n#define first a vector of alphas to simulate from\nvecalphas<-seq(from=1.1,to=10.9,length.out = 20)\nvbig<-NULL\nvsma<-NULL\nvtf<-NULL\nfor(sma in vecalphas)\n{\n  big<-1.5\n  #sma<-0.5\n  alphas[1,2]<- big # 1->2\n  alphas[2,1]<- sma ##1->2  \n  alphas[1,3]<- big # 1->3\n  alphas[3,1]<- sma ##1->3\n  alphas[1,4]<- sma # 1<-4\n  alphas[4,1]<- big ##1<-4\n  alphas[1,5]<- sma # 1<-5\n  alphas[5,1]<- big ##1<-5\n  ##  alpha[2,2]<- 0\n  alphas[2,3]<- big # 2->3\n  alphas[3,2]<- sma ##2->3\n  alphas[2,4]<- big # 2->4\n  alphas[4,2]<- sma ##2->4\n  alphas[2,5]<- sma # 2<-5\n  alphas[5,2]<- big ##2<-5\n  ##  a33<-0\n  alphas[3,4]<- big # 3->4\n  alphas[4,3]<- sma ##3->4\n  alphas[3,5]<- big #3 ->5\n  alphas[5,3]<- sma ##3->5\n  ##  a44<-0\n  alphas[4,5]<- big # 4->5\n  alphas[5,4]<- sma ##4<-5\n  #alphas[5,5]<-0\n  \n  \n  #gather all parameters in a list\n  parameters<-list(rs=rs,\n                   ks=ks,\n                   alphas=alphas)\n  \n  #define the vector of output times\n  times<-seq(from=0,to=1000,by=0.5)\n  \n  \n  #define the differential equation\n  lvccmat<-function(t,Y,parameters)\n  {\n    y<- Y #transform Y in a local vector\n    #use the local vector to construct the system of ODEs\n    #and assign it to the vector of ODEs\n    dY<- rs*y - (rs*y^2 + rs*colSums(outer(y,y,FUN =\"*\")*alphas))*(1/ks)\n    #return the whole vector for the output\n    return(list(dY))\n  }\n  \n  #now do the simulation\n  \n  out<-ode(y=state,times=times,func=lvccmat)\n  \n  equilibria<-function(df)\n  {\n    sz<-dim(df)\n    #this function takes the output of an ode solve, clips out\n    #the last 50 entries and find if they are at equilibria\n    eq<-out[(sz[1]-50):sz[1],2:sz[2]]\n    #check if the equilibrium was reached  \n    minmax<-function(x){c(min=min(x),max=max(x))}\n    eqminmax<-apply(eq,2,minmax)\n    abs(eqminmax[\"min\",]-eqminmax[\"max\",])<0.01\n  }\n  vbig<-c(vbig,big)\n  vsma<-c(vsma,sma)\n  vtf<-rbind(vtf,equilibria(out))\n}\ndfequi<-data.frame(alphaBIG=vbig,alphaSMALL=vsma,vequi=vtf)\n",
+    "created" : 1455560693408.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3526464390",
+    "id" : "B6B3174B",
+    "lastKnownWriteTime" : 1455578845,
+    "path" : "~/harvest/R/lvccEQalpha.R",
+    "project_path" : "lvccEQalpha.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

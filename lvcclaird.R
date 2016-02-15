@@ -13,8 +13,8 @@ alphas<-matrix(0,nrow=size,ncol=size) #competition coefs.
 #define the state variables (populations) and their initial conditions are
 #since this is a matrix notation system, use a named vector for 
 #graphing purposes.
-#state<-rep(0.2, size)
-state<-c(0.1,0.2,0.2,0.2,0.3)
+state<-rep(0.5, size)
+#state<-c(0.1,0.2,0.2,0.2,0.3)
 names(state)<-paste("N",1:size,sep="")
 
 #to assign the competition coefficients, it was assumed 
