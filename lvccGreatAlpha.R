@@ -4,10 +4,10 @@
 #competition network
 #this applies laird et al 2009 on a lv system
 
-#The objective of this file is to show that symmetric deviations
-#in alphas from the ratio k1/k2 and k2/k1 preserve the numerical
-#value of the equilibrium.
- 
+#The objective of this file is to explore ASYMETTRIC deviations
+#in alphas from the ratio k1/k2 and k2/k1 in relation to the numerical
+#value of the equilibrium. Only BIG alpha will be enlarged in a wide interval
+
 library(deSolve)
 rm(list=ls())
 
@@ -50,9 +50,9 @@ amplitude<-function(mat)
 times<-seq(from=0,to=1000,by=0.5)
 
 #initialize output of oscilations
-out.osc<-c(dist=NA,N1=NA,N2=NA,N3=NA,N4=NA,N5=NA)
+out.osc<-c(dist=NA,eq1=NA,eq2=NA,eq3=NA,eq4=NA,eq5=NA,N1=NA,N2=NA,N3=NA,N4=NA,N5=NA)
 ## start a loop for the symmetrical differences
-distseq<-seq(from=0.0001, to=0.9999, length.out = 50)
+distseq<-seq(from=0, to=20, length.out = 50)
 for (i in distseq)
 {
   #to assign the competition coefficients, it was assumed 
@@ -62,7 +62,7 @@ for (i in distseq)
   #        ####       #                    #
   ##alpha[1,1]<- 0
   big<-1+i
-  sma<-1-i
+  sma<-1-0.5
   alphas[1,2]<- big # 1->2
   alphas[2,1]<- sma ##1->2  
   alphas[1,3]<- big # 1->3
@@ -104,8 +104,17 @@ for (i in distseq)
   last<-out[1550:2000,2:6]
   #measure for oscillations
   ampl<-amplitude(last)
-  #associate dist and amplitude
-  osc<-c(dist=i,ampl)
+  #estimate equilibria with average
+  avg<-apply(last,2,mean)
+  #name the entries of the vector#
+  names(avg)<-c("eq1","eq2","eq3","eq4","eq5")
+  #associate dist, equilibria and amplitude
+  osc<-c(dist=i,avg,ampl)
+  
   out.osc<-rbind(out.osc,osc)
 }
-
+#eliminate fist row
+num<-dim(out.osc)
+out.osc<-out.osc[2:(num[1]),]
+#this plot relates the distance to the equilibrium point.
+plot((out.osc[,1]),out.osc[,2])
